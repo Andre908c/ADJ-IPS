@@ -1,4 +1,4 @@
-Aquí tienes actualizado el contenido completo del archivo `README.md` incluyendo a todos los integrantes del equipo en un solo bloque listo para copiar:
+
 
 ```markdown
 # Sistema de Microservicios - Gestión de Citas Médicas 🏥
