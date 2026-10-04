@@ -1,45 +1,49 @@
-const db = require('../config/db'); // Sube un nivel para entrar a config/db.js
-const bcrypt = require('bcrypt'); // Opcional para encriptar contraseñas
+const pool = require('../config/db');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Controlador para el Login
-async function login(req, res) {
+const login = async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        // Consultamos el usuario en la base de datos PostgreSQL
-        const queryText = 'SELECT * FROM usuarios WHERE username = $1';
-        const result = await db.query(queryText, [username]);
-
-        if (result.rows.length === 0) {
-            return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+        // 1. Buscar al usuario en la base de datos PostgreSQL
+        const userQuery = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
+        
+        if (userQuery.rows.length === 0) {
+            return res.status(401).json({ error: 'Credenciales inválidas (usuario no encontrado)' });
         }
 
-        const user = result.rows[0];
+        const user = userQuery.rows[0];
 
-        // Validar contraseña (aquí puedes comparar con bcrypt si ya lo tienes implementado)
-        if (password !== user.password) {
-            return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+        // 2. Comparar la contraseña ingresada con la encriptada en la BD
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.status(401).json({ error: 'Credenciales inválidas (contraseña incorrecta)' });
         }
 
-        // Generar Token JWT
+        // 3. Generar el Token JWT usando la clave del .env
         const token = jwt.sign(
-            { id: user.id, username: user.username, rol: user.rol }, 
-            process.env.JWT_SECRET || 'secreto_dev', 
-            { expiresIn: '1h' }
+            { id: user.id, username: user.username, rol: user.rol },
+            process.env.JWT_SECRET,
+            { expiresIn: '2h' } // El token expira en 2 horas
         );
 
-        res.json({
-            message: '¡Login exitoso!',
-            token: token,
-            rol: user.rol // Útil para que el frontend sepa si redirige a paciente o médico
+        // 4. Responder con éxito enviando el token y los datos del usuario
+        res.status(200).json({
+            message: 'Autenticación exitosa',
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                rol: user.rol
+            }
         });
 
     } catch (error) {
-        console.error('Error en el controlador de login:', error);
+        console.error('Error en el login:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
-}
+};
 
 module.exports = {
     login

@@ -1,50 +1,42 @@
-version: '3.8'
-
 services:
-  frontend:
-    image: gordito908/frontend-app:latest
-    ports:
-      - "8080:80"
-    depends_on:
-      - api-gateway
-
-  api-gateway:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - PORT=3000
-      - USERS_SERVICE_URL=http://auth-service:3001
-    depends_on:
-      - auth-service
-
-  auth-service:
-    build:
-      context: ./auth-service
-    ports:
-      - "3001:3001"
-    environment:
-      - PORT=3001
-      - DB_HOST=database
-      - DB_USER=dev-admin
-      - DB_PASSWORD=dev-123
-      - DB_NAME=medimicro_db
-      - DB_PORT=5432
-    depends_on:
-      - database
-
-database:
+  postgres:
     image: postgres:15-alpine
-    container_name: medimicro-db
+    container_name: medimicro_postgres
     environment:
-      POSTGRES_USER: dev-admin
-      POSTGRES_PASSWORD: dev-123
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mipasswordseguro123
       POSTGRES_DB: medimicro_db
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./auth-service/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - medimicro-net
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: medimicro_auth_service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=mipasswordseguro123
+      - DB_NAME=medimicro_db
+      - DB_PORT=5432
+      - JWT_SECRET=9a6cdf658b8e728807aa2a3e62be0e80d24a6b5252528b6a483e2ea78eab08a3cd8cc9726f9efe76262c14ec8e7a300ff78bac77b0360574058d6062ab1faa5a
+    depends_on:
+      - postgres
+    networks:
+      - medimicro-net
 
 volumes:
-  pgdata:
+  postgres_data:
+
+networks:
+  medimicro-net:
+    driver: bridge
