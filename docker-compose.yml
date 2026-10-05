@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: medimicro_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mipasswordseguro123
+      POSTGRES_DB: medimicro_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - medimicro-net
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: medimicro_auth_service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=mipasswordseguro123
+      - DB_NAME=medimicro_db
+      - DB_PORT=5432
+      - JWT_SECRET=9a6cdf658b8e728807aa2a3e62be0e80d24a6b5252528b6a483e2ea78eab08a3cd8cc9726f9efe76262c14ec8e7a300ff78bac77b0360574058d6062ab1faa5a
+    depends_on:
+      - postgres
+    networks:
+      - medimicro-net
+
+volumes:
+  postgres_data:
+
+networks:
+  medimicro-net:
+    driver: bridge
