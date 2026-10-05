@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  # Tu servicio de base de datos o auth-service existente
+  # ...
+
+  pharmacy-service:
+    build: ./pharmacy-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=adj_ips_db
+      - DB_PORT=5432
