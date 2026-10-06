@@ -17,7 +17,7 @@ class CitaRepository {
             );
 
             await connection.query(
-                "UPDATE agendas SET estado = 'OCUPADO' WHERE id = ?",
+                "UPDATE agendas SET estado = 'OCUPADA' WHERE id = ?",
                 [agenda_id]
             );
 
