@@ -7,6 +7,28 @@ CREATE TABLE IF NOT EXISTS usuarios (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX IF NOT EXISTS idx_usuarios_username ON usuarios(username);
+
+-- Tabla de agendas y citas
+CREATE TABLE IF NOT EXISTS agendas (
+    id SERIAL PRIMARY KEY,
+    medico_id INT NOT NULL,
+    fecha TIMESTAMP NOT NULL,
+    estado VARCHAR(20) DEFAULT 'DISPONIBLE'
+);
+
+CREATE INDEX IF NOT EXISTS idx_agendas_estado ON agendas(estado);
+
+CREATE TABLE IF NOT EXISTS citas (
+    id SERIAL PRIMARY KEY,
+    agenda_id INT NOT NULL,
+    paciente_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_citas_agenda_id ON citas(agenda_id);
+CREATE INDEX IF NOT EXISTS idx_citas_paciente_id ON citas(paciente_id);
+
 -- Insertar el usuario administrador personalizado (dev-ips) y otros de prueba
 -- Contraseña para dev-ips: 12345678910 (Hash bcrypt generado)
 INSERT INTO usuarios (username, password, rol) 

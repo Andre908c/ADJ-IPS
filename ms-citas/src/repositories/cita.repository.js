@@ -22,12 +22,12 @@ class CitaRepository {
             );
 
             await connection.commit();
-            connection.release();
             return { id: result.insertId, agenda_id, paciente_id, estado: 'CONFIRMADA' };
         } catch (error) {
             await connection.rollback();
-            connection.release();
             throw error;
+        } finally {
+            connection.release();
         }
     }
 }

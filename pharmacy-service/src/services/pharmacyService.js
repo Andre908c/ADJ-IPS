@@ -1,49 +1,35 @@
-const pharmacyService = require('../services/pharmacyService');
+const pharmacyRepository = require('../repositories/pharmacyRepository');
 
-class PharmacyController {
-  async getMedicines(req, res) {
-    try {
-      const medicines = await pharmacyService.getAllMedications();
-      res.json(medicines);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+class PharmacyService {
+  async listInventory() {
+    return await pharmacyRepository.getAllMedicines();
   }
 
-  async getMedicineById(req, res) {
-    try {
-      const medicine = await pharmacyService.getMedicationById(req.params.id);
-      if (!medicine) {
-        return res.status(404).json({ error: 'Medicamento no encontrado' });
-      }
-      res.json(medicine);
-    } catch (error) {
-      res.status(404).json({ error: error.message });
+  async getMedicine(id) {
+    const medicine = await pharmacyRepository.getMedicineById(id);
+    if (!medicine) {
+      throw new Error('Medicamento no encontrado');
     }
+    return medicine;
   }
 
-  async createMedicine(req, res) {
-    try {
-      const newMedicine = await pharmacyService.createMedication(req.body);
-      res.status(201).json(newMedicine);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+  async registerMedicine(data) {
+    if (!data.name || data.stock === undefined || data.unit_price === undefined) {
+      throw new Error('Nombre, stock y precio unitario son campos obligatorios');
     }
+    return await pharmacyRepository.createMedicine(data);
   }
 
-  async updateStock(req, res) {
-    try {
-      const { id } = req.params;
-      const { stock } = req.body;
-      const updated = await pharmacyService.updateStock(id, stock);
-      if (!updated) {
-        return res.status(404).json({ error: 'Medicamento no encontrado' });
-      }
-      res.json(updated);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+  async updateStock(id, amount) {
+    if (amount === undefined || isNaN(amount)) {
+      throw new Error('La cantidad a actualizar debe ser un número válido');
     }
+    const updated = await pharmacyRepository.updateStock(id, amount);
+    if (!updated) {
+      throw new Error('Medicamento no encontrado');
+    }
+    return updated;
   }
 }
 
-module.exports = new PharmacyController();
+module.exports = new PharmacyService();

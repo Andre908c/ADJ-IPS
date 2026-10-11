@@ -31,7 +31,7 @@ class PharmacyController {
   async updateStock(req, res) {
     try {
       const { id } = req.params;
-      const { amount } = req.body; // Puede ser positivo (entrada) o negativo (salida/despacho)
+      const amount = req.body.amount !== undefined ? req.body.amount : req.body.stock;
       const updated = await pharmacyService.updateStock(id, amount);
       res.json(updated);
     } catch (error) {

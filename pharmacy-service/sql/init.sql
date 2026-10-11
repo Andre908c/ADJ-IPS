@@ -8,6 +8,9 @@ CREATE TABLE IF NOT EXISTS medicines (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX IF NOT EXISTS idx_medicines_name ON medicines(name);
+CREATE INDEX IF NOT EXISTS idx_medicines_category ON medicines(category);
+
 -- Datos de prueba iniciales
 INSERT INTO medicines (name, description, stock, unit_price, category) VALUES
 ('Acetaminofén 500mg', 'Analgésico y antipirético', 100, 1500.00, 'Analgésicos'),
