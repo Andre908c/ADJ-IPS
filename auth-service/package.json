@@ -1,6 +1,7 @@
 {
   "name": "auth-service",
   "version": "1.0.0",
+  "description": "Microservicio de autenticación y gestión de usuarios para MediMicro Services",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

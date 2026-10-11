@@ -27,6 +27,15 @@ class CitaRepository {
 
             await client.query("UPDATE agendas SET estado = 'OCUPADO' WHERE id = $1", [agenda_id]);
 
+<<<<<<< HEAD
+            await connection.commit();
+            return { id: result.insertId, agenda_id, paciente_id, estado: 'CONFIRMADA' };
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+=======
             await client.query('COMMIT');
             return { id: result.rows[0].id, agenda_id, paciente_id, estado: 'CONFIRMADA' };
         } catch (error) {
@@ -34,6 +43,7 @@ class CitaRepository {
             throw error;
         } finally {
             client.release();
+>>>>>>> main
         }
     }
 
