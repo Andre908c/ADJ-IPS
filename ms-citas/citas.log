@@ -1,0 +1,10 @@
+nohup: ignoring input
+
+> ms-citas@1.0.0 start
+> node src/app.js
+
+Microservicio Citas y Agendas corriendo en el puerto 3002
+¡Conectado a la base de datos PostgreSQL exitosamente!
+¡Conectado a la base de datos PostgreSQL exitosamente!
+¡Conectado a la base de datos PostgreSQL exitosamente!
+¡Conectado a la base de datos PostgreSQL exitosamente!

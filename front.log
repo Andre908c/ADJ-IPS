@@ -1,0 +1,44 @@
+nohup: ignoring input
+ INFO  Accepting connections at http://localhost:5500
+ HTTP  10/7/2026 12:00:37 AM ::1 GET /
+ HTTP  10/7/2026 12:00:37 AM ::1 Returned 200 in 20 ms
+ HTTP  10/7/2026 12:00:41 AM ::1 GET /login
+ HTTP  10/7/2026 12:00:41 AM ::1 Returned 304 in 4 ms
+ HTTP  10/7/2026 12:00:42 AM ::1 GET /app.js
+ HTTP  10/7/2026 12:00:42 AM ::1 Returned 200 in 2 ms
+ HTTP  10/7/2026 12:02:51 AM ::1 GET /dashboard-medico.html
+ HTTP  10/7/2026 12:02:51 AM ::1 Returned 301 in 3 ms
+ HTTP  10/7/2026 12:02:52 AM ::1 GET /dashboard-medico
+ HTTP  10/7/2026 12:02:52 AM ::1 Returned 200 in 7 ms
+ HTTP  10/7/2026 12:03:03 AM ::1 GET /login
+ HTTP  10/7/2026 12:03:03 AM ::1 Returned 304 in 2 ms
+ HTTP  10/7/2026 12:03:03 AM ::1 GET /app.js
+ HTTP  10/7/2026 12:03:03 AM ::1 Returned 304 in 2 ms
+ HTTP  10/7/2026 12:03:08 AM ::1 GET /dashboard-paciente
+ HTTP  10/7/2026 12:03:08 AM ::1 Returned 200 in 1 ms
+ HTTP  10/7/2026 12:03:08 AM ::1 GET /app.js
+ HTTP  10/7/2026 12:03:08 AM ::1 Returned 304 in 1 ms
+ HTTP  10/7/2026 12:03:22 AM ::1 GET /login
+ HTTP  10/7/2026 12:03:22 AM ::1 Returned 304 in 2 ms
+ HTTP  10/7/2026 12:03:22 AM ::1 GET /app.js
+ HTTP  10/7/2026 12:03:22 AM ::1 Returned 304 in 1 ms
+ HTTP  10/7/2026 12:23:27 AM ::1 GET /login.html
+ HTTP  10/7/2026 12:23:27 AM ::1 Returned 301 in 0 ms
+ HTTP  10/7/2026 12:57:52 AM ::1 GET /dashboard-paciente
+ HTTP  10/7/2026 12:57:52 AM ::1 Returned 304 in 10 ms
+ HTTP  10/7/2026 12:57:52 AM ::1 GET /app.js
+ HTTP  10/7/2026 12:57:52 AM ::1 Returned 304 in 1 ms
+ HTTP  10/7/2026 12:57:52 AM ::1 GET /favicon.ico
+ HTTP  10/7/2026 12:57:52 AM ::1 Returned 404 in 2 ms
+ HTTP  10/7/2026 12:58:17 AM ::1 GET /login
+ HTTP  10/7/2026 12:58:17 AM ::1 Returned 200 in 2 ms
+ HTTP  10/7/2026 12:58:17 AM ::1 GET /app.js
+ HTTP  10/7/2026 12:58:17 AM ::1 Returned 304 in 3 ms
+ HTTP  10/7/2026 12:58:22 AM ::1 GET /dashboard-medico.html
+ HTTP  10/7/2026 12:58:22 AM ::1 Returned 301 in 1 ms
+ HTTP  10/7/2026 12:58:22 AM ::1 GET /dashboard-medico
+ HTTP  10/7/2026 12:58:22 AM ::1 Returned 304 in 1 ms
+ HTTP  10/7/2026 12:58:40 AM ::1 GET /login
+ HTTP  10/7/2026 12:58:40 AM ::1 Returned 304 in 1 ms
+ HTTP  10/7/2026 12:58:41 AM ::1 GET /app.js
+ HTTP  10/7/2026 12:58:41 AM ::1 Returned 304 in 1 ms

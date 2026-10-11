@@ -1,0 +1,10 @@
+nohup: ignoring input
+
+> auth-service@1.0.0 start
+> node src/index.js
+
+Auth service running on port 3004
+Database connected successfully in auth-service
+Database connected successfully in auth-service
+Database connected successfully in auth-service
+Database connected successfully in auth-service
