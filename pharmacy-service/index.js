@@ -1,12 +1,14 @@
 const express = require('express');
 const cors = require('cors');
+
 require('dotenv').config();
+
 
 // Al estar afuera, debes importar desde './src/routes/...'
 const pharmacyRoutes = require('./src/routes/pharmacyRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3003;
 
 app.use(cors());
 app.use(express.json());

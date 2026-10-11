@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Paciente - MediMicro IPS</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --input-bg: #ffffff;
+            --input-border: #ccc;
+            --btn-bg: #007bff;
+            --btn-hover: #0056b3;
+            --header-bg: #007bff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121212;
+                --card-bg: #1e1e1e;
+                --text-color: #e0e0e0;
+                --input-bg: #2d2d2d;
+                --input-border: #444;
+                --btn-bg: #0d6efd;
+                --btn-hover: #0b5ed7;
+                --header-bg: #1f1f1f;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h2 { color: var(--btn-bg); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: var(--btn-bg);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background-color: var(--btn-hover); }
+
+        .logout-btn { background-color: #dc3545; }
+        .logout-btn:hover { background-color: #b02a37; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>MediMicro - Portal del Paciente</h2>
+        <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </header>
+
+    <div class="container">
+        <!-- Sección para Agendar Cita -->
+        <div class="card">
+            <h3>Agendar Nueva Cita</h3>
+            <form id="citaForm">
+                <div class="form-group">
+                    <label for="especialidad">Especialidad Médica:</label>
+                    <select id="especialidad" required>
+                        <option value="medicina-general">Medicina General</option>
+                        <option value="odontologia">Odontología</option>
+                        <option value="pediatria">Pediatría</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha">Fecha y Hora:</label>
+                    <input type="datetime-local" id="fecha" required>
+                </div>
+                <button type="submit">Solicitar Cita</button>
+            </form>
+        </div>
+
+        <!-- Sección de Mis Citas -->
+        <div class="card">
+            <h3>Mis Citas Programadas</h3>
+            <ul id="listaCitas">
+                <li>Cargando citas...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Verificar si hay token al cargar
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+
+        // Lógica de agendamiento y consumo conectada al API Gateway
+        document.getElementById('citaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const especialidad = document.getElementById('especialidad').value;
+            const fecha = document.getElementById('fecha').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/citas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ especialidad, fecha })
+                });
+
+                if (response.ok) {
+                    alert('¡Cita agendada con éxito!');
+                    cargarCitas();
+                } else {
+                    alert('Error al agendar la cita');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('No se pudo conectar con el API Gateway');
+            }
+        });
+
+        async function cargarCitas() {
+            // Simulación de carga desde el microservicio vía Gateway
+            const lista = document.getElementById('listaCitas');
+            lista.innerHTML = '<li>Medicina General - 15 Oct 2026, 10:00 AM (Confirmada)</li>';
+        }
+
+        cargarCitas();
+    </script>
+</body>
+</html>

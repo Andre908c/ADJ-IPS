@@ -40,3 +40,8 @@ volumes:
 networks:
   medimicro-net:
     driver: bridge
+
+cd /workspaces/ADJ-IPS/ms-citas
+PASS=$(grep -m1 POSTGRES_PASSWORD ../docker-compose.yml | awk '{print $2}')
+sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=$PASS/" .env
+sed 's/PASSWORD=.*/PASSWORD=***/' .env

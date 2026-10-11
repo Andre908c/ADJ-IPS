@@ -102,18 +102,13 @@
             <h3>Agendar Nueva Cita</h3>
             <form id="citaForm">
                 <div class="form-group">
-                    <label for="especialidad">Especialidad Médica:</label>
-                    <select id="especialidad" required>
-                        <option value="medicina-general">Medicina General</option>
-                        <option value="odontologia">Odontología</option>
-                        <option value="pediatria">Pediatría</option>
+                    <label for="agenda">Horarios disponibles:</label>
+                    <select id="agenda" required>
+                        <option value="">Cargando...</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="fecha">Fecha y Hora:</label>
-                    <input type="datetime-local" id="fecha" required>
-                </div>
                 <button type="submit">Solicitar Cita</button>
+                <div id="msg" style="margin-top:10px;font-size:14px;"></div>
             </form>
         </div>
 
@@ -126,52 +121,111 @@
         </div>
     </div>
 
+    <script src="app.js"></script>
     <script>
-        // Verificar si hay token al cargar
         const token = localStorage.getItem('token');
         if (!token) {
             window.location.href = 'login.html';
         }
 
+        const authHeaders = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+
         function cerrarSesion() {
             localStorage.removeItem('token');
+            localStorage.removeItem('rol');
+            localStorage.removeItem('username');
             window.location.href = 'login.html';
         }
 
-        // Lógica de agendamiento y consumo conectada al API Gateway
+        function formatearFecha(iso) {
+            return new Date(iso).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
+        }
+
+        function mostrarMsg(texto, color) {
+            const m = document.getElementById('msg');
+            m.style.color = color;
+            m.textContent = texto;
+        }
+
+        async function cargarAgendas() {
+            const select = document.getElementById('agenda');
+            try {
+                const res = await fetch(`${CITAS_URL}/api/agendas`, { headers: authHeaders });
+                if (res.status === 401) return cerrarSesion();
+                const agendas = await res.json();
+
+                select.innerHTML = '';
+                if (!Array.isArray(agendas) || agendas.length === 0) {
+                    select.innerHTML = '<option value="">No hay horarios disponibles</option>';
+                    return;
+                }
+                agendas.forEach(a => {
+                    const opt = document.createElement('option');
+                    opt.value = a.id;
+                    opt.textContent = `Agenda #${a.id} - ${formatearFecha(a.fecha_hora)}`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error(err);
+                select.innerHTML = '<option value="">Error al cargar horarios</option>';
+            }
+        }
+
+        async function cargarCitas() {
+            const lista = document.getElementById('listaCitas');
+            try {
+                const res = await fetch(`${CITAS_URL}/api/citas/mias`, { headers: authHeaders });
+                if (res.status === 401) return cerrarSesion();
+                const citas = await res.json();
+
+                lista.innerHTML = '';
+                if (!Array.isArray(citas) || citas.length === 0) {
+                    lista.innerHTML = '<li>Aún no tienes citas.</li>';
+                    return;
+                }
+                citas.forEach(c => {
+                    const li = document.createElement('li');
+                    li.textContent = `${formatearFecha(c.fecha_hora)} (${c.estado})`;
+                    lista.appendChild(li);
+                });
+            } catch (err) {
+                console.error(err);
+                lista.innerHTML = '<li>No se pudieron cargar las citas.</li>';
+            }
+        }
+
         document.getElementById('citaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const especialidad = document.getElementById('especialidad').value;
-            const fecha = document.getElementById('fecha').value;
+            const agenda_id = document.getElementById('agenda').value;
+            if (!agenda_id) return mostrarMsg('Selecciona un horario.', 'red');
 
             try {
-                const response = await fetch('http://localhost:3000/api/citas', {
+                const res = await fetch(`${CITAS_URL}/api/citas`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ especialidad, fecha })
+                    headers: authHeaders,
+                    body: JSON.stringify({ agenda_id: Number(agenda_id) })
                 });
+                const data = await res.json();
 
-                if (response.ok) {
-                    alert('¡Cita agendada con éxito!');
+                if (res.ok) {
+                    mostrarMsg('¡Cita agendada con éxito!', 'green');
+                    cargarAgendas();
                     cargarCitas();
+                } else if (res.status === 401) {
+                    cerrarSesion();
                 } else {
-                    alert('Error al agendar la cita');
+                    mostrarMsg(data.error || 'Error al agendar la cita', 'red');
                 }
             } catch (err) {
                 console.error(err);
-                alert('No se pudo conectar con el API Gateway');
+                mostrarMsg('No se pudo conectar con el servicio de citas.', 'red');
             }
         });
 
-        async function cargarCitas() {
-            // Simulación de carga desde el microservicio vía Gateway
-            const lista = document.getElementById('listaCitas');
-            lista.innerHTML = '<li>Medicina General - 15 Oct 2026, 10:00 AM (Confirmada)</li>';
-        }
-
+        cargarAgendas();
         cargarCitas();
     </script>
 </body>
